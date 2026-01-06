@@ -1,0 +1,405 @@
+{
+  "project": {
+    "name": "Ticket Manager Frontend",
+    "version": "1.0.0",
+    "description": "Sistema de gestión de tickets con React + TypeScript + Tailwind",
+    "status": "Production Ready ✅"
+  },
+  "tech_stack": {
+    "build_tool": "Vite 7.3",
+    "framework": "React 19.2",
+    "language": "TypeScript 5.9 (strict mode)",
+    "styling": "Tailwind CSS 4.1",
+    "routing": "React Router 7.11",
+    "http_client": "Axios 1.13",
+    "icons": "Lucide React 0.56 (189+ icons)",
+    "package_manager": "PNPM"
+  },
+  "quick_commands": {
+    "install": "pnpm install",
+    "dev": "pnpm dev (http://localhost:5173)",
+    "build": "pnpm build",
+    "preview": "pnpm preview",
+    "lint": "pnpm lint",
+    "typecheck": "pnpm tsc --noEmit"
+  },
+  "environment": {
+    "variable": "VITE_API_BASE_URL",
+    "default_value": "http://localhost:3000/api",
+    "location": ".env.local"
+  },
+  "architecture": {
+    "pattern": "Feature-based vertical slices",
+    "layers": [
+      {
+        "name": "Pages",
+        "path": "src/pages/",
+        "description": "Coordinadores de página",
+        "count": 7
+      },
+      {
+        "name": "Features",
+        "path": "src/features/{feature}/",
+        "description": "Lógica de negocio (hooks + services)",
+        "count": 4
+      },
+      {
+        "name": "Components",
+        "path": "src/components/",
+        "description": "Componentes reutilizables",
+        "count": 11
+      },
+      {
+        "name": "Services",
+        "path": "src/services/",
+        "description": "HTTP client centralizado",
+        "count": 1
+      },
+      {
+        "name": "Types",
+        "path": "src/types/",
+        "description": "Tipos TypeScript globales",
+        "count": 1
+      },
+      {
+        "name": "Utilities",
+        "path": "src/lib/",
+        "description": "Funciones de utilidad",
+        "count": 1
+      }
+    ]
+  },
+  "features": [
+    {
+      "name": "Authentication",
+      "path": "src/features/auth/",
+      "hooks": ["useAuth", "useLogin", "useRegister"],
+      "services": ["authService"],
+      "endpoints": ["POST /auth/login", "POST /auth/register", "POST /auth/logout"]
+    },
+    {
+      "name": "Tickets",
+      "path": "src/features/tickets/",
+      "hooks": ["useTickets", "useTicketDetail", "useComments"],
+      "services": ["ticketService", "commentService"],
+      "endpoints": ["GET/POST /tickets", "GET/PUT/DELETE /tickets/:id", "GET/POST /comments"]
+    },
+    {
+      "name": "Users",
+      "path": "src/features/users/",
+      "hooks": ["useUsers", "useCreateUser"],
+      "services": ["userService"],
+      "endpoints": ["GET/POST /users", "GET/PUT/DELETE /users/:id"]
+    },
+    {
+      "name": "Clients",
+      "path": "src/features/clients/",
+      "hooks": ["useClients", "useCreateClient"],
+      "services": ["clientService"],
+      "endpoints": ["GET/POST /clients", "GET/PUT/DELETE /clients/:id"]
+    }
+  ],
+  "pages": [
+    {
+      "route": "/login",
+      "component": "LoginPage",
+      "protected": false,
+      "description": "Autenticación de usuario"
+    },
+    {
+      "route": "/register",
+      "component": "RegisterPage",
+      "protected": false,
+      "description": "Registro de nuevo usuario"
+    },
+    {
+      "route": "/dashboard",
+      "component": "DashboardPage",
+      "protected": true,
+      "description": "Panel principal con estadísticas"
+    },
+    {
+      "route": "/tickets",
+      "component": "TicketsPage",
+      "protected": true,
+      "description": "Lista de tickets con filtrado"
+    },
+    {
+      "route": "/tickets/:id",
+      "component": "TicketDetailPage",
+      "protected": true,
+      "description": "Detalle y edición de ticket"
+    },
+    {
+      "route": "/users",
+      "component": "UsersPage",
+      "protected": true,
+      "description": "Gestión de usuarios"
+    },
+    {
+      "route": "/clients",
+      "component": "ClientsPage",
+      "protected": true,
+      "description": "Gestión de clientes"
+    }
+  ],
+  "components": {
+    "ui": [
+      "Button",
+      "Input",
+      "Select",
+      "Card",
+      "Alert"
+    ],
+    "common": [
+      "Header",
+      "Sidebar",
+      "Breadcrumbs",
+      "LoadingState",
+      "ErrorState",
+      "EmptyState"
+    ]
+  },
+  "types": {
+    "models": [
+      "User",
+      "Ticket",
+      "Client",
+      "Comment",
+      "Permission"
+    ],
+    "enums": [
+      "TicketStatus (OPEN, IN_PROGRESS, WAITING_ON_*, RESOLVED, CLOSED, CANCELLED)",
+      "TicketPriority (LOW, MEDIUM, HIGH, CRITICAL)",
+      "ClientTier (FREE, BASIC, PREMIUM, ENTERPRISE)",
+      "UserRole (ADMIN, AGENT, CLIENT)"
+    ],
+    "payloads": [
+      "LoginPayload",
+      "RegisterPayload",
+      "CreateTicketPayload",
+      "UpdateTicketPayload",
+      "CreateCommentPayload",
+      "UpdateCommentPayload",
+      "CreateUserPayload",
+      "UpdateUserPayload",
+      "CreateClientPayload",
+      "UpdateClientPayload"
+    ]
+  },
+  "validation_rules": {
+    "password": "Mínimo 8 caracteres",
+    "email": "Debe ser único y válido",
+    "username": "Debe ser único",
+    "ticket_status": "Enumerado (ver TicketStatus)",
+    "ticket_priority": "Enumerado (ver TicketPriority)",
+    "client_tier": "Enumerado (ver ClientTier)"
+  },
+  "directory_structure": {
+    "src": {
+      "app": "Router y bootstrap",
+      "pages": "Componentes de página (7 archivos)",
+      "components": {
+        "ui": "Componentes atómicos (Button, Input, Select, Card, Alert)",
+        "common": "Componentes compuestos (Header, Sidebar, Breadcrumbs, States)"
+      },
+      "features": {
+        "auth": "Autenticación (hooks + services)",
+        "tickets": "Gestión de tickets (hooks + services)",
+        "users": "Gestión de usuarios (hooks + services)",
+        "clients": "Gestión de clientes (hooks + services)"
+      },
+      "services": {
+        "http": "Cliente HTTP con Axios"
+      },
+      "hooks": "Hooks genéricos (si existen)",
+      "lib": "Utilidades (errorHandler, constants, etc.)",
+      "types": "Tipos TypeScript globales",
+      "styles": "CSS global (Tailwind solo)"
+    }
+  },
+  "key_files": [
+    {
+      "path": "src/app/router.tsx",
+      "purpose": "Definición de rutas",
+      "when_to_modify": "Agregar nueva ruta"
+    },
+    {
+      "path": "src/types/index.ts",
+      "purpose": "Tipos globales",
+      "when_to_modify": "Agregar nuevo tipo o enum"
+    },
+    {
+      "path": "src/services/http/client.ts",
+      "purpose": "Cliente HTTP",
+      "when_to_modify": "Cambiar interceptores o base URL"
+    },
+    {
+      "path": "src/components/common/Sidebar.tsx",
+      "purpose": "Navegación principal",
+      "when_to_modify": "Agregar nuevo enlace de menú"
+    },
+    {
+      "path": ".env.local",
+      "purpose": "Variables de entorno",
+      "when_to_modify": "Cambiar URL de API"
+    }
+  ],
+  "naming_conventions": {
+    "components": "PascalCase.tsx",
+    "hooks": "useCamelCase.ts",
+    "services": "camelCase.ts",
+    "utilities": "camelCase.ts",
+    "types": "PascalCase",
+    "enums": "PascalCase",
+    "constants": "UPPER_CASE",
+    "variables": "camelCase",
+    "event_handlers": "handleCamelCase"
+  },
+  "http_client_methods": [
+    "httpClient.get<T>(url)",
+    "httpClient.post<T>(url, payload)",
+    "httpClient.put<T>(url, payload)",
+    "httpClient.delete(url)"
+  ],
+  "hook_pattern": {
+    "structure": {
+      "state": "useState({data, loading, error})",
+      "effect": "useEffect(() => { /* fetch */ }, [dependencies])",
+      "error_handling": "try-catch con getErrorMessage(error)",
+      "return": "{ data, loading, error, methods }"
+    }
+  },
+  "state_handling": {
+    "local_state": "useState() en componentes",
+    "async_state": "Hooks en features",
+    "auth_state": "localStorage + useAuth hook",
+    "ui_state": "useState() en páginas",
+    "global_state": "No usar, mantener local y props"
+  },
+  "error_handling": {
+    "utility": "getErrorMessage() from lib/errorHandler.ts",
+    "usage": "const message = getErrorMessage(error)",
+    "display": "ErrorState component o Error alert"
+  },
+  "documentation": {
+    "QUICK_START.md": "Guía de 15 min para empezar",
+    "ARCHITECTURE.md": "Explicación de estructura (20 min)",
+    "CONTRIBUTING.md": "Cómo agregar features (25 min)",
+    "TROUBLESHOOTING.md": "Solución de problemas (20 min)",
+    "PRODUCTION_CHECKLIST.md": "Verificación pre-deploy (15 min)",
+    "DOCS_INDEX.md": "Índice de toda la documentación",
+    "docs/ai/": "Contratos y reglas obligatorias"
+  },
+  "mandatory_rules": {
+    "no_custom_css": "Solo Tailwind CSS",
+    "no_inline_styles": "Usar className solo",
+    "strict_typescript": "No any types (usar getErrorMessage)",
+    "component_structure": "components/ui es componentes base, features tiene lógica",
+    "import_rules": "pages → features → services, no circular imports",
+    "responsive_design": "mobile-first approach, hidden md:flex",
+    "accessibility": "aria-labels en interactivos",
+    "error_handling": "getErrorMessage() utility",
+    "loading_states": "Mostrar LoadingState siempre",
+    "empty_states": "Mostrar EmptyState cuando no hay datos"
+  },
+  "build_and_deploy": {
+    "build": "pnpm build",
+    "output": "dist/",
+    "dist_size": "358.85 kB JS + 0.91 kB CSS (gzip)",
+    "build_time": "~1.3 segundos",
+    "preview": "pnpm preview",
+    "deploy_to": "Vercel, Netlify, o servidor estático"
+  },
+  "authentication_flow": {
+    "login": "POST /auth/login → token en localStorage",
+    "persist": "useAuth hook obtiene token de localStorage",
+    "inject": "Axios interceptor agrega Authorization header",
+    "protect": "ProtectedRoute redirige a /login si no hay token",
+    "logout": "Limpia localStorage, redirige a /login",
+    "401_handling": "Axios interceptor captura 401 → logout automático"
+  },
+  "api_integration": {
+    "base_url": "import.meta.env.VITE_API_BASE_URL",
+    "token_header": "Authorization: Bearer {token}",
+    "content_type": "application/json",
+    "error_format": "{ message: string } o { message: string[] }",
+    "endpoint_format": "/api/{resource}"
+  },
+  "testing_credentials": {
+    "email": "test@example.com",
+    "password": "Test1234",
+    "note": "Crear en backend o usar credenciales reales"
+  },
+  "performance_targets": {
+    "load_time": "< 3 segundos",
+    "bundle_size": "< 500 KB gzip",
+    "interaction": "< 500ms",
+    "first_paint": "< 2 segundos"
+  },
+  "browser_support": [
+    "Chrome (latest)",
+    "Firefox (latest)",
+    "Safari (latest)",
+    "Edge (latest)",
+    "Mobile browsers"
+  ],
+  "code_quality": {
+    "typescript": "Strict mode",
+    "linting": "ESLint configured",
+    "formatting": "Prettier (optional)",
+    "no_unused": "Imports y variables",
+    "no_console_logs": "En producción",
+    "comments": "En funciones complejas"
+  },
+  "git_workflow": {
+    "branch_naming": "feature/*, bugfix/*, etc.",
+    "commit_message": "Descripción clara y concisa",
+    "pre_commit": "pnpm tsc --noEmit && pnpm lint",
+    "pr_checklist": "CONTRIBUTING.md sección 'Verificar Cumplimiento'"
+  },
+  "monitoring": {
+    "frontend": "DevTools, Console, Network",
+    "backend": "API logs, Error tracking",
+    "recommended_tools": "Sentry, LogRocket, Google Analytics"
+  },
+  "next_steps": [
+    "Ejecutar: pnpm install",
+    "Ejecutar: pnpm dev",
+    "Abrir: http://localhost:5173",
+    "Leer: QUICK_START.md",
+    "Leer: ARCHITECTURE.md",
+    "Explorar código",
+    "Verificar backend en http://localhost:3000/api",
+    "Hacer login con credenciales"
+  ],
+  "support_resources": [
+    {
+      "document": "QUICK_START.md",
+      "for": "Setup rápido"
+    },
+    {
+      "document": "ARCHITECTURE.md",
+      "for": "Entender estructura"
+    },
+    {
+      "document": "CONTRIBUTING.md",
+      "for": "Agregar features"
+    },
+    {
+      "document": "TROUBLESHOOTING.md",
+      "for": "Solucionar problemas"
+    },
+    {
+      "document": "PRODUCTION_CHECKLIST.md",
+      "for": "Pre-deploy"
+    },
+    {
+      "document": "docs/ai/",
+      "for": "Reglas obligatorias"
+    }
+  ],
+  "last_updated": "2024",
+  "status": "✅ Production Ready - All features implemented",
+  "note": "Este archivo es una referencia rápida. Para documentación completa, ver DOCS_INDEX.md"
+}
