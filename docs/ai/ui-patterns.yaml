@@ -1,0 +1,68 @@
+patterns:
+
+  page:
+    description: Route-level page component
+    container:
+      class: "max-w-7xl mx-auto px-4 md:px-6 lg:px-8"
+    spacing:
+      vertical: "space-y-6"
+    structure:
+      - PageHeader
+      - PageContent
+      - PageFooter
+
+  page_header:
+    description: Page title and description
+    wrapper:
+      class: "space-y-1"
+    title:
+      class: "text-2xl font-semibold"
+    description:
+      class: "text-sm text-muted-foreground"
+
+  section:
+    description: Logical grouping inside a page
+    wrapper:
+      class: "space-y-4"
+
+  card:
+    description: Generic content container
+    base:
+      class: "rounded-2xl border bg-card shadow-sm p-6"
+    header:
+      class: "mb-4 space-y-1"
+    body:
+      class: "space-y-2"
+    footer:
+      class: "pt-4 flex justify-end gap-2"
+
+  form:
+    description: Standard SPA form layout
+    wrapper:
+      class: "space-y-6"
+    fields:
+      class: "space-y-4"
+    actions:
+      class: "flex justify-end gap-2"
+
+  list:
+    description: Vertical list of items
+    wrapper:
+      class: "space-y-2"
+
+  empty_state:
+    description: No-data UI
+    wrapper:
+      class: "flex flex-col items-center justify-center py-12 text-center space-y-4"
+    text:
+      class: "text-sm text-muted-foreground"
+
+  loading_state:
+    description: Loading UI for async operations
+    wrapper:
+      class: "flex items-center justify-center py-12"
+
+  error_state:
+    description: Error feedback UI
+    wrapper:
+      class: "rounded-lg border border-destructive/50 bg-destructive/10 p-4 space-y-2"
