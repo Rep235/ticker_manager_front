@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+#Ignorar la carpeta de notas y herramientas de productividad personales
+notes
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
