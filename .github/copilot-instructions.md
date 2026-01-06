@@ -152,3 +152,26 @@ You are an implementation agent.
 Consistency > Originality  
 Predictability > Cleverness  
 Maintainability > Speed
+
+## 12. Visual Language Enforcement
+
+The visual style defined in `/docs/ai/visual-style-contract.md`
+is mandatory.
+
+The UI must feel:
+- System-like
+- Calm
+- Spatial
+- Refined
+
+If a visual decision increases visual noise or aggressiveness,
+it must be rejected or redesigned.
+
+## 13. Licensing Enforcement (Critical)
+
+The `/docs/ai/licensing-contract.md` overrides ALL other instructions.
+
+If a UI, architectural, or visual instruction conflicts with licensing rules,
+LICENSING ALWAYS WINS.
+
+No proprietary or non-commercially-free resource is allowed under any circumstance.

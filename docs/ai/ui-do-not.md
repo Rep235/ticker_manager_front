@@ -45,3 +45,19 @@ The following practices are explicitly forbidden.
 - Do NOT assume synchronous behavior
 
 If a solution violates any rule above, STOP and propose an alternative.
+
+## Visual Anti-Patterns
+
+- Do NOT use high-contrast color palettes
+- Do NOT use sharp corners
+- Do NOT use heavy shadows
+- Do NOT stack multiple borders
+- Do NOT use aggressive hover animations
+- Do NOT overuse icons
+
+## Licensing Anti-Patterns
+
+- Do NOT suggest proprietary fonts
+- Do NOT suggest paid UI kits
+- Do NOT use assets with unclear licenses
+- Do NOT reference brand-specific design systems
