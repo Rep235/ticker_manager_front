@@ -12,6 +12,8 @@ const navItems = [
   { to: '/tickets', label: 'Tickets', icon: TicketIcon },
   { to: '/users', label: 'Usuarios', icon: Users },
   { to: '/clients', label: 'Clientes', icon: Building2 },
+  { to: '/settings', label: 'Preferencias', icon: Settings },
+  { to: '/about', label: 'Acerca de', icon: Building2 },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
@@ -65,12 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
-            <button className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-200 transition-colors">
-              <Settings size={18} />
-              <span>Configuración</span>
-            </button>
-          </div>
+          {/* Footer removed: settings now in navItems */}
         </div>
       </aside>
     </>

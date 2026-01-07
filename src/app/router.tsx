@@ -7,6 +7,9 @@ import UsersPage from '../pages/UsersPage';
 import ClientsPage from '../pages/ClientsPage';
 import TicketsPage from '../pages/TicketsPage';
 import LayoutPage from '../pages/LayoutPage';
+import SetupPage from '../pages/SetupPage';
+import SettingsPage from '../pages/SettingsPage';
+import AboutPage from '../pages/AboutPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const router = createBrowserRouter([
@@ -17,6 +20,10 @@ export const router = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/setup',
+    element: <SetupPage />,
   },
   {
     path: '/',
@@ -49,6 +56,14 @@ export const router = createBrowserRouter([
       {
         path: 'clients',
         element: <ClientsPage />,
+      },
+      {
+        path: 'settings',
+        element: <SettingsPage />,
+      },
+      {
+        path: 'about',
+        element: <AboutPage />,
       },
     ],
   },
