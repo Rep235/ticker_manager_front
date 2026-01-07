@@ -27,6 +27,35 @@ export interface RegisterPayload {
   lastName: string;
 }
 
+// Setup / Bootstrap
+export interface SetupStatus {
+  needsAdmin: boolean;
+  hasUsers: boolean;
+  message?: string;
+}
+
+export interface BootstrapAdminPayload {
+  username: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  companyName?: string;
+}
+
+export interface BootstrapAdminResponse {
+  id: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: 'ADMIN';
+  companyId: string;
+  isActive: boolean;
+  token: string;
+}
+}
+
 // Tickets
 export type TicketStatus =
   | 'OPEN'

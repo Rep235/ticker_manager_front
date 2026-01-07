@@ -7,10 +7,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles = {
-  primary: 'bg-blue-600 hover:bg-blue-700 text-white',
-  secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-900',
-  ghost: 'bg-transparent hover:bg-gray-100 text-gray-900',
-  destructive: 'bg-red-600 hover:bg-red-700 text-white',
+  primary: 'bg-[var(--accent-600)] hover:bg-[var(--accent-700)] text-white focus:ring-[color:var(--accent-300)]',
+  secondary: 'bg-[var(--surface-muted)] border border-[var(--border)] hover:bg-[var(--border)] text-[var(--text)]',
+  ghost: 'bg-transparent hover:bg-[var(--surface-muted)] text-[var(--text)]',
+  destructive: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-400',
 };
 
 const sizeStyles = {
@@ -21,7 +21,7 @@ const sizeStyles = {
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'primary', size = 'md', isLoading = false, disabled, ...props }, ref) => {
-    const baseStyles = 'rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseStyles = 'rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-300)] focus:ring-offset-[var(--surface)] disabled:opacity-50 disabled:cursor-not-allowed';
 
     const className = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${props.className || ''}`;
 
