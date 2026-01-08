@@ -1,15 +1,16 @@
+import CompaniesPage from '../pages/CompaniesPage';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import DashboardPage from '../pages/DashboardPage';
 import TicketDetailPage from '../pages/TicketDetailPage';
 import UsersPage from '../pages/UsersPage';
-import ClientsPage from '../pages/ClientsPage';
 import TicketsPage from '../pages/TicketsPage';
 import LayoutPage from '../pages/LayoutPage';
 import SetupPage from '../pages/SetupPage';
 import SettingsPage from '../pages/SettingsPage';
 import AboutPage from '../pages/AboutPage';
+import CreateCompanyPage from '../pages/CreateCompanyPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const router = createBrowserRouter([
@@ -54,8 +55,12 @@ export const router = createBrowserRouter([
         element: <UsersPage />,
       },
       {
-        path: 'clients',
-        element: <ClientsPage />,
+        path: 'companies',
+        element: <CompaniesPage />,
+      },
+      {
+        path: 'companies/create',
+        element: <CreateCompanyPage />,
       },
       {
         path: 'settings',

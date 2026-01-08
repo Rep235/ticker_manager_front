@@ -1,5 +1,4 @@
 import { useTickets } from '../features/tickets';
-import { useClients } from '../features/clients';
 import { useUsers } from '../features/users';
 import { LoadingState, ErrorState, EmptyState } from '../components/common/States';
 import { Card, CardHeader, CardBody } from '../components/ui/Card';
@@ -64,7 +63,6 @@ const RecentTicketsWidget: React.FC<{ tickets: Ticket[] }> = ({ tickets }) => {
 
 const DashboardPage: React.FC = () => {
   const { tickets, loading: ticketsLoading, error: ticketsError } = useTickets();
-  const { clients, loading: clientsLoading } = useClients();
   const { users, loading: usersLoading } = useUsers();
 
   const openTickets = tickets.filter(
@@ -74,7 +72,7 @@ const DashboardPage: React.FC = () => {
       t.status !== 'CANCELLED'
   ).length;
 
-  if (ticketsLoading || clientsLoading || usersLoading) {
+  if (ticketsLoading || usersLoading) {
     return <LoadingState message="Cargando dashboard..." />;
   }
 
@@ -110,8 +108,7 @@ const DashboardPage: React.FC = () => {
         />
         <StatCard
           icon={<Building2 className="text-orange-600" size={24} />}
-          label="Clientes"
-          value={clients.length}
+          // Se eliminó la tarjeta de clientes
           color="bg-orange-50"
         />
       </div>
