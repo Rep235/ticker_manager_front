@@ -7,7 +7,7 @@ export interface User {
   lastName: string;
   isActive: boolean;
   createdAt: string;
-  role?: 'ADMIN' | 'AGENT' | 'CLIENT';
+  role?: 'ADMIN' | 'AGENT';
 }
 
 export interface AuthResponse {
@@ -60,7 +60,7 @@ export interface BootstrapAdminResponse {
 export type TicketStatus =
   | 'OPEN'
   | 'IN_PROGRESS'
-  | 'WAITING_ON_CLIENT'
+  // 'WAITING_ON_CLIENT' eliminado
   | 'WAITING_ON_AGENT'
   | 'RESOLVED'
   | 'CLOSED'
@@ -73,8 +73,7 @@ export type ClosureReason =
   | 'DUPLICATE'
   | 'WONT_FIX'
   | 'CANNOT_REPRODUCE'
-  | 'CLIENT_NO_RESPONSE'
-  | 'CANCELLED_BY_CLIENT'
+  // 'CLIENT_NO_RESPONSE' y 'CANCELLED_BY_CLIENT' eliminados
   | 'SPAM'
   | 'OTHER';
 
@@ -84,7 +83,7 @@ export interface Ticket {
   description: string;
   status: TicketStatus;
   priority: TicketPriority;
-  clientId: string;
+  // clientId eliminado
   assignedAgentId?: string;
   createdAt: string;
   updatedAt: string;
@@ -92,7 +91,7 @@ export interface Ticket {
   closureReason?: ClosureReason;
   closureNote?: string;
   tags?: string[];
-  client?: Client;
+  // client eliminado
   assignedAgent?: User;
   commentsCount?: number;
 }
@@ -100,7 +99,7 @@ export interface Ticket {
 export interface CreateTicketPayload {
   title: string;
   description: string;
-  clientId: string;
+  // clientId eliminado
   priority?: TicketPriority;
   assignedAgentId?: string;
   tags?: string[];
@@ -123,33 +122,7 @@ export interface UpdateTicketPayload {
 export type ClientTier = 'FREE' | 'BASIC' | 'PREMIUM' | 'ENTERPRISE';
 
 export interface Client {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  company?: string;
-  tier: ClientTier;
-  isActive: boolean;
-  createdAt: string;
-}
-
-export interface CreateClientPayload {
-  name: string;
-  email: string;
-  phone?: string;
-  company?: string;
-  tier?: ClientTier;
-}
-
-export interface UpdateClientPayload {
-  name?: string;
-  email?: string;
-  phone?: string;
-  company?: string;
-  tier?: ClientTier;
-  isActive?: boolean;
-}
-
+  // Tipos de cliente eliminados
 // Comments
 export interface Comment {
   id: string;

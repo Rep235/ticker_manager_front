@@ -1,0 +1,7 @@
+src/pages/ClientsPage.tsx
+src/features/clients/index.ts
+src/features/clients/services/clientService.ts
+src/features/clients/services/index.ts
+src/features/clients/hooks/useClients.ts
+src/features/clients/hooks/useCreateClient.ts
+src/features/clients/hooks/index.ts

@@ -1,21 +1,25 @@
 import { useState } from 'react';
 import { useUsers, useCreateUser } from '../features/users';
-import { Button, Input, Card, CardHeader, CardBody, CardFooter, Alert } from '../components/ui';
+import { useCompanies } from '../features/companies/hooks/useCompanies';
+import { Button, Input, Card, CardHeader, CardBody, CardFooter, Alert, Select } from '../components/ui';
 import { LoadingState, ErrorState, EmptyState, Breadcrumbs } from '../components/common';
 import { Plus, Trash2 } from 'lucide-react';
 import type { CreateUserPayload } from '../features/users/services/userService';
 
 const UsersPage: React.FC = () => {
   const { users, loading, error, refetch } = useUsers();
+  const [search, setSearch] = useState('');
   const { loading: creating, error: createError, createUser } = useCreateUser();
   const [showForm, setShowForm] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const { companies, loading: loadingCompanies, error: errorCompanies } = useCompanies();
   const [formData, setFormData] = useState<CreateUserPayload>({
     username: '',
     email: '',
     password: '',
     firstName: '',
     lastName: '',
+    companyId: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,8 +29,8 @@ const UsersPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setLocalError(null);
 
     if (
@@ -34,9 +38,10 @@ const UsersPage: React.FC = () => {
       !formData.email ||
       !formData.password ||
       !formData.firstName ||
-      !formData.lastName
+      !formData.lastName ||
+      !formData.companyId
     ) {
-      setLocalError('Por favor completa todos los campos');
+      setLocalError('Por favor completa todos los campos, incluyendo la empresa');
       return;
     }
 
@@ -48,6 +53,7 @@ const UsersPage: React.FC = () => {
         password: '',
         firstName: '',
         lastName: '',
+        companyId: '',
       });
       setShowForm(false);
       refetch();
@@ -55,6 +61,16 @@ const UsersPage: React.FC = () => {
       setLocalError(createError);
     }
   };
+
+  // Filtrado flexible por nombre, apellido o username
+  const filteredUsers = users?.filter((user) => {
+    const term = search.toLowerCase();
+    return (
+      user.username.toLowerCase().includes(term) ||
+      user.firstName?.toLowerCase().includes(term) ||
+      user.lastName?.toLowerCase().includes(term)
+    );
+  }) || [];
 
   if (loading) {
     return <LoadingState message="Cargando usuarios..." />;
@@ -64,9 +80,18 @@ const UsersPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <Breadcrumbs items={[{ label: 'Usuarios' }]} />
-          <h1 className="text-2xl font-semibold text-gray-900 mt-4">Gestionar Usuarios</h1>
-          <p className="text-sm text-gray-600 mt-1">Administra los usuarios del sistema</p>
+          <Breadcrumbs items={[{ label: 'Usuarios: Gestión manual' }]} />
+          <h1 className="text-2xl font-semibold text-gray-900 mt-4">Usuarios: Gestión manual</h1>
+          <p className="text-sm text-gray-600 mt-1">Administra los usuarios del sistema de forma manual</p>
+          <div className="my-4 max-w-xs">
+            <Input
+              name="search"
+              label="Buscar por nombre de usuario"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Buscar usuario..."
+            />
+          </div>
         </div>
         <Button onClick={() => setShowForm(!showForm)}>
           <Plus size={16} className="mr-2" />
@@ -81,7 +106,15 @@ const UsersPage: React.FC = () => {
       {/* Create Form */}
       {showForm && (
         <Card>
-          <CardHeader title="Crear Usuario" description="Añade un nuevo usuario al sistema" />
+          <CardHeader title="Usuarios: Gestión manual" description="Añade, edita o elimina usuarios manualmente" />
+          <div className="my-6">
+            {/* Placeholder para el flujo de invitación por magic link */}
+            <div className="rounded-md border border-dashed border-gray-300 p-6 text-center bg-gray-50">
+              <div className="text-lg font-medium mb-2">Próximamente: Invitación por Magic Link</div>
+              <div className="text-gray-600 text-sm mb-2">El operador podrá enviar un correo electrónico con un enlace mágico para que el usuario cree su cuenta personalizada.</div>
+              <div className="inline-block px-3 py-1 text-xs bg-gray-200 rounded-full text-gray-700">Componente en desarrollo</div>
+            </div>
+          </div>
           <CardBody>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -127,26 +160,35 @@ const UsersPage: React.FC = () => {
                   onChange={handleChange}
                   disabled={creating}
                 />
+                <Select
+                  label="Empresa"
+                  name="companyId"
+                  value={formData.companyId}
+                  onChange={e => setFormData(prev => ({ ...prev, companyId: e.target.value }))}
+                  options={companies.map(c => ({ value: c.id, label: c.name }))}
+                  disabled={loadingCompanies}
+                  required
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="secondary" onClick={() => setShowForm(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" isLoading={creating}>
+                  Crear Usuario
+                </Button>
               </div>
             </form>
           </CardBody>
-          <CardFooter>
-            <Button variant="secondary" onClick={() => setShowForm(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleSubmit} isLoading={creating}>
-              Crear Usuario
-            </Button>
-          </CardFooter>
         </Card>
       )}
 
       {/* Users Table */}
-      {!error && users.length === 0 && (
+      {!error && filteredUsers.length === 0 && (
         <EmptyState message="No hay usuarios en el sistema" />
       )}
 
-      {!error && users.length > 0 && (
+      {!error && filteredUsers.length > 0 && (
         <Card>
           <CardBody className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -160,7 +202,7 @@ const UsersPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-4 text-gray-900">
                       {user.firstName} {user.lastName}

@@ -1,1 +1,0 @@
-export { clientService } from './clientService';

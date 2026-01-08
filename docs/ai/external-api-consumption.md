@@ -1,3 +1,68 @@
+### Register / Registrarse
+
+**EN:** Create a new user account. Users must be assigned to a company (`companyId` is required). New users are assigned the CLIENT role by default.
+
+**ES:** Crear una nueva cuenta de usuario. Los usuarios deben asignarse a una compañía (`companyId` es obligatorio). Los nuevos usuarios reciben el rol CLIENT por defecto.
+
+```bash
+# Request / Petición
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "username": "john.doe",
+  "email": "john@example.com",
+  "password": "SecurePassword123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "companyId": "00000000-0000-0000-0000-000000000001"  # <-- required/obligatorio
+}
+
+# Response / Respuesta
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "username": "john.doe",
+  "email": "john@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "CLIENT",
+  "companyId": "00000000-0000-0000-0000-000000000001",
+  "isActive": true,
+  "createdAt": "2025-01-06T10:00:00.000Z",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+### Create User / Crear Usuario
+
+```bash
+POST http://localhost:3000/users
+Authorization: Bearer <your-token>
+Content-Type: application/json
+
+{
+  "username": "john.doe",
+  "email": "john.doe@example.com",
+  "password": "securePassword123",
+  "firstName": "John",
+  "lastName": "Doe",
+  "companyId": "00000000-0000-0000-0000-000000000001",  # <-- required/obligatorio
+  "role": "AGENT"
+}
+```
+**Response / Respuesta**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "username": "john.doe",
+  "email": "john.doe@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "AGENT",
+  "companyId": "00000000-0000-0000-0000-000000000001",
+  "isActive": true,
+  "createdAt": "2025-01-06T10:00:00.000Z"
+}
+```
 # Frontend Integration Guide for Ticket Manager API
 
 **Purpose:** This guide is designed for LLM agents developing a frontend UI that connects to the Ticket Manager API backend.
@@ -23,29 +88,33 @@
 - **Documentation:** Swagger/OpenAPI available at `/api`
 - **Base URL:** `http://localhost:3000` (configurable via `PORT` environment variable)
 
-### Key Characteristics
-- **Single-tenant on-premise deployment** (no multi-tenancy)
-- **RESTful API** following REST conventions
-- **Permission-based authorization** (RBAC - Role-Based Access Control)
-- **UUID primary keys** for all resources
-- **Strict validation** on all inputs using class-validator
 
----
+## 👥 Clients / Clientes (Deprecado)
 
-## Architecture
+> **[DEPRECATED]**
+>
+> La lógica de clientes ahora está centralizada en el módulo de usuarios (`users`). Para crear o gestionar cuentas de clientes, utiliza los endpoints de `users` y asigna el rol `CLIENT`.
+>
+> **No utilices endpoints específicos de clientes.**
 
-### Feature-Based Structure
-The API is organized by features (vertical slices):
-- **auth** - Authentication (login, register)
-- **tickets** - Ticket management
-- **clients** - Client management
-- **comments** - Comment management
-- **users** - User management
-- **permissions** - Permission management
+**Ejemplo: Crear un usuario cliente**
 
-### Design Principles
-1. All endpoints validate input using DTOs (Data Transfer Objects)
-2. All protected endpoints require JWT authentication
+```bash
+POST http://localhost:3000/users
+Authorization: Bearer <your-token>
+Content-Type: application/json
+
+{
+  "username": "acme.client",
+  "email": "contact@acme.com",
+  "password": "SecurePassword123!",
+  "firstName": "Acme",
+  "lastName": "Client",
+  "role": "CLIENT",
+  "companyId": "00000000-0000-0000-0000-000000000001",
+  "phone": "+1234567890"
+}
+```
 3. Most endpoints also require specific permissions
 4. Responses use dedicated Response DTOs (no raw entities)
 5. All IDs are UUIDs (not sequential integers)

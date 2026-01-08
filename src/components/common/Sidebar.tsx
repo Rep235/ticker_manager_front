@@ -11,12 +11,24 @@ const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: TicketIcon },
   { to: '/tickets', label: 'Tickets', icon: TicketIcon },
   { to: '/users', label: 'Usuarios', icon: Users },
-  { to: '/clients', label: 'Clientes', icon: Building2 },
+  { to: '/companies', label: 'Compañías', icon: Building2 },
+  { to: '/companies/create', label: 'Nueva Compañía', icon: Building2, adminOnly: true },
   { to: '/settings', label: 'Preferencias', icon: Settings },
   { to: '/about', label: 'Acerca de', icon: Building2 },
 ];
 
+import { useAuth } from '../../features/auth';
+
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
+  const { token, isAuthenticated } = useAuth();
+  let userRole: string | undefined = undefined;
+  try {
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      userRole = payload.role;
+    }
+  } catch {}
+
   return (
     <>
       {/* Mobile overlay */}
@@ -48,22 +60,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 space-y-2">
-            {navItems.map(({ to, label, icon: Icon }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-blue-100 text-blue-700 font-medium'
-                      : 'text-gray-700 hover:bg-gray-200'
-                  }`
-                }
-              >
-                <Icon size={18} />
-                <span>{label}</span>
-              </NavLink>
-            ))}
+            {navItems
+              .filter(item => !item.adminOnly || userRole === 'ADMIN')
+              .map(({ to, label, icon: Icon }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-blue-100 text-blue-700 font-medium'
+                        : 'text-gray-700 hover:bg-gray-200'
+                    }`
+                  }
+                >
+                  <Icon size={18} />
+                  <span>{label}</span>
+                </NavLink>
+              ))}
           </nav>
 
           {/* Footer */}
