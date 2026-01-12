@@ -20,7 +20,7 @@ const navItems = [
 import { useAuth } from '../../features/auth';
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
-  const { token, isAuthenticated } = useAuth();
+  const { token } = useAuth();
   let userRole: string | undefined = undefined;
   try {
     if (token) {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 class HttpClient {
   private instance: AxiosInstance;
@@ -51,6 +51,10 @@ class HttpClient {
 
   put<T = unknown>(url: string, data?: unknown, config?: any) {
     return this.instance.put<T>(url, data, config);
+  }
+
+  patch<T = unknown>(url: string, data?: unknown, config?: any) {
+    return this.instance.patch<T>(url, data, config);
   }
 
   delete<T = unknown>(url: string, config?: any) {
