@@ -54,7 +54,6 @@ export interface BootstrapAdminResponse {
   isActive: boolean;
   token: string;
 }
-}
 
 // Tickets
 export type TicketStatus =
@@ -121,8 +120,6 @@ export interface UpdateTicketPayload {
 // Clients
 export type ClientTier = 'FREE' | 'BASIC' | 'PREMIUM' | 'ENTERPRISE';
 
-export interface Client {
-  // Tipos de cliente eliminados
 // Comments
 export interface Comment {
   id: string;

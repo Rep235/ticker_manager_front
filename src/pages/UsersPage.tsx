@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useUsers, useCreateUser } from '../features/users';
 import { useCompanies } from '../features/companies/hooks/useCompanies';
-import { Button, Input, Card, CardHeader, CardBody, CardFooter, Alert, Select } from '../components/ui';
+import { Button, Input, Card, CardHeader, CardBody, Alert, Select } from '../components/ui';
 import { LoadingState, ErrorState, EmptyState, Breadcrumbs } from '../components/common';
 import { Plus, Trash2 } from 'lucide-react';
 import type { CreateUserPayload } from '../features/users/services/userService';
@@ -12,7 +12,7 @@ const UsersPage: React.FC = () => {
   const { loading: creating, error: createError, createUser } = useCreateUser();
   const [showForm, setShowForm] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
-  const { companies, loading: loadingCompanies, error: errorCompanies } = useCompanies();
+  const { companies, loading: loadingCompanies } = useCompanies();
   const [formData, setFormData] = useState<CreateUserPayload>({
     username: '',
     email: '',
@@ -63,14 +63,16 @@ const UsersPage: React.FC = () => {
   };
 
   // Filtrado flexible por nombre, apellido o username
-  const filteredUsers = users?.filter((user) => {
-    const term = search.toLowerCase();
-    return (
-      user.username.toLowerCase().includes(term) ||
-      user.firstName?.toLowerCase().includes(term) ||
-      user.lastName?.toLowerCase().includes(term)
-    );
-  }) || [];
+  const filteredUsers = Array.isArray(users)
+    ? users.filter((user) => {
+        const term = search.toLowerCase();
+        return (
+          user.username.toLowerCase().includes(term) ||
+          user.firstName?.toLowerCase().includes(term) ||
+          user.lastName?.toLowerCase().includes(term)
+        );
+      })
+    : [];
 
   if (loading) {
     return <LoadingState message="Cargando usuarios..." />;

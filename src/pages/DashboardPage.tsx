@@ -2,7 +2,7 @@ import { useTickets } from '../features/tickets';
 import { useUsers } from '../features/users';
 import { LoadingState, ErrorState, EmptyState } from '../components/common/States';
 import { Card, CardHeader, CardBody } from '../components/ui/Card';
-import { TrendingUp, Users, Building2, AlertCircle } from 'lucide-react';
+import { TrendingUp, Users, AlertCircle } from 'lucide-react';
 import type { Ticket } from '../types';
 
 const StatCard: React.FC<{
@@ -23,7 +23,7 @@ const StatCard: React.FC<{
 );
 
 const RecentTicketsWidget: React.FC<{ tickets: Ticket[] }> = ({ tickets }) => {
-  const recent = tickets.slice(0, 5);
+  const recent = Array.isArray(tickets) ? tickets.slice(0, 5) : [];
 
   if (recent.length === 0) {
     return <EmptyState message="No hay tickets recientes" />;
@@ -65,12 +65,14 @@ const DashboardPage: React.FC = () => {
   const { tickets, loading: ticketsLoading, error: ticketsError } = useTickets();
   const { users, loading: usersLoading } = useUsers();
 
-  const openTickets = tickets.filter(
-    (t) =>
-      t.status !== 'CLOSED' &&
-      t.status !== 'RESOLVED' &&
-      t.status !== 'CANCELLED'
-  ).length;
+  const openTickets = Array.isArray(tickets)
+    ? tickets.filter(
+        (t) =>
+          t.status !== 'CLOSED' &&
+          t.status !== 'RESOLVED' &&
+          t.status !== 'CANCELLED'
+      ).length
+    : 0;
 
   if (ticketsLoading || usersLoading) {
     return <LoadingState message="Cargando dashboard..." />;
@@ -105,11 +107,6 @@ const DashboardPage: React.FC = () => {
           label="Usuarios"
           value={users.length}
           color="bg-purple-50"
-        />
-        <StatCard
-          icon={<Building2 className="text-orange-600" size={24} />}
-          // Se eliminó la tarjeta de clientes
-          color="bg-orange-50"
         />
       </div>
 

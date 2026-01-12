@@ -264,10 +264,6 @@ const TicketDetailPage = () => {
             <CardHeader title="Información" />
             <CardBody className="space-y-3 text-sm">
               <div>
-                <p className="text-xs text-gray-600">ID del Cliente</p>
-                <p className="font-medium text-gray-900">{ticket.clientId}</p>
-              </div>
-              <div>
                 <p className="text-xs text-gray-600">Creado</p>
                 <p className="font-medium text-gray-900">
                   {new Date(ticket.createdAt).toLocaleDateString('es-ES')}

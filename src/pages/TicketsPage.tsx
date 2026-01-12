@@ -12,21 +12,22 @@ const TicketsPage: React.FC = () => {
   const [priorityFilter, setPriorityFilter] = useState<TicketPriority | ''>('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredTickets = tickets.filter((ticket) => {
-    const matchesStatus = !statusFilter || ticket.status === statusFilter;
-    const matchesPriority = !priorityFilter || ticket.priority === priorityFilter;
-    const matchesSearch =
-      !searchTerm ||
-      ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return matchesStatus && matchesPriority && matchesSearch;
-  });
+  const filteredTickets = Array.isArray(tickets)
+    ? tickets.filter((ticket) => {
+        const matchesStatus = !statusFilter || ticket.status === statusFilter;
+        const matchesPriority = !priorityFilter || ticket.priority === priorityFilter;
+        const matchesSearch =
+          !searchTerm ||
+          ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ticket.description.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesStatus && matchesPriority && matchesSearch;
+      })
+    : [];
+    // ...existing code...
 
   const statusOptions = [
     { value: 'OPEN', label: 'Abierto' },
     { value: 'IN_PROGRESS', label: 'En progreso' },
-    { value: 'WAITING_ON_CLIENT', label: 'Esperando cliente' },
     { value: 'WAITING_ON_AGENT', label: 'Esperando agente' },
     { value: 'RESOLVED', label: 'Resuelto' },
     { value: 'CLOSED', label: 'Cerrado' },
@@ -46,7 +47,6 @@ const TicketsPage: React.FC = () => {
         return 'bg-blue-100 text-blue-700';
       case 'IN_PROGRESS':
         return 'bg-yellow-100 text-yellow-700';
-      case 'WAITING_ON_CLIENT':
       case 'WAITING_ON_AGENT':
         return 'bg-orange-100 text-orange-700';
       case 'RESOLVED':
@@ -166,9 +166,6 @@ const TicketsPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
-                    <div>
-                      Cliente: <span className="font-medium text-gray-700">{ticket.clientId}</span>
-                    </div>
                     {ticket.dueDate && (
                       <div>
                         Vencimiento: <span className="font-medium">{new Date(ticket.dueDate).toLocaleDateString('es-ES')}</span>
