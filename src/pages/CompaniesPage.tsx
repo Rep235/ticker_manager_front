@@ -9,7 +9,7 @@ import { Select } from '../components/ui/Select';
 import { Alert } from '../components/ui/Alert';
 
 export default function CompaniesPage() {
-  const { companies, loading, error, refetch } = useCompanies();
+  const { companies, loading, error, refetch, page, totalPages, total, nextPage, prevPage } = useCompanies({ initialPageSize: 10 });
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Partial<Company>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -246,6 +246,14 @@ export default function CompaniesPage() {
               </Card>
             ))
           )}
+          <div className="flex items-center justify-between pt-2">
+            <div className="text-sm text-gray-600">Total: {total}</div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="secondary" onClick={prevPage} disabled={page <= 1}>Anterior</Button>
+              <span className="text-sm">Página {page} de {Math.max(1, totalPages || 1)}</span>
+              <Button size="sm" onClick={nextPage} disabled={totalPages ? page >= totalPages : false}>Siguiente</Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

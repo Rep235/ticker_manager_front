@@ -1,7 +1,7 @@
 import type { User } from '../../../types/index';
 import { httpClient } from '../../../services/http';
 
-type PaginatedResponse<T> = {
+export type PaginatedResponse<T> = {
   data: T[];
   total: number;
   offset: number;
@@ -29,11 +29,11 @@ export interface UpdateUserPayload {
 }
 
 export const userService = {
-  async getUsers(companyId?: string, offset: number = 0, limit: number = 100): Promise<User[]> {
+  async getUsers(companyId?: string, offset: number = 0, limit: number = 10): Promise<PaginatedResponse<User>> {
     const { data } = await httpClient.get<PaginatedResponse<User>>('/users', {
       params: { ...(companyId && { companyId }), offset, limit },
     });
-    return data.data;
+    return data;
   },
 
   async getUserById(id: string): Promise<User> {

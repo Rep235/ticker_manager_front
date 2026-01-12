@@ -16,7 +16,7 @@ export type Company = {
   responsibleUserIds?: string[]; // For create/update requests
 }
 
-type PaginatedResponse<T> = {
+export type PaginatedResponse<T> = {
   data: T[];
   total: number;
   offset: number;
@@ -25,12 +25,12 @@ type PaginatedResponse<T> = {
 };
 
 export const companyService = {
-  async getCompanies(offset: number = 0, limit: number = 100): Promise<Company[]> {
+  async getCompanies(offset: number = 0, limit: number = 10): Promise<PaginatedResponse<Company>> {
     const { data } = await httpClient.get<PaginatedResponse<Company>>('/companies', {
       params: { offset, limit },
     });
-    // The API returns a paginated envelope { data, total, offset, limit }
-    return data.data;
+    // Return full paginated envelope
+    return data;
   },
   async createCompany(payload: Partial<Company>): Promise<Company> {
     const { data } = await httpClient.post<Company>('/companies', payload);

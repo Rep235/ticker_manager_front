@@ -7,7 +7,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import type { CreateUserPayload } from '../features/users/services/userService';
 
 const UsersPage: React.FC = () => {
-  const { users, loading, error, refetch } = useUsers();
+  const { users, loading, error, refetch, page, totalPages, total, nextPage, prevPage } = useUsers({ initialPageSize: 10 });
   const [search, setSearch] = useState('');
   const { loading: creating, error: createError, createUser } = useCreateUser();
   const [showForm, setShowForm] = useState(false);
@@ -231,6 +231,14 @@ const UsersPage: React.FC = () => {
                 ))}
               </tbody>
             </table>
+            <div className="flex items-center justify-between mt-4">
+              <div className="text-sm text-gray-600">Total: {total}</div>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="secondary" onClick={prevPage} disabled={page <= 1}>Anterior</Button>
+                <span className="text-sm">Página {page} de {Math.max(1, totalPages || 1)}</span>
+                <Button size="sm" onClick={nextPage} disabled={totalPages ? page >= totalPages : false}>Siguiente</Button>
+              </div>
+            </div>
           </CardBody>
         </Card>
       )}
