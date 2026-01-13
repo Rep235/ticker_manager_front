@@ -82,11 +82,12 @@ export interface Ticket {
   description: string;
   status: TicketStatus;
   priority: TicketPriority;
-  // clientId eliminado
+  clientId?: string;
   assignedAgentId?: string;
   createdAt: string;
   updatedAt: string;
   dueDate?: string;
+  closedAt?: string;
   closureReason?: ClosureReason;
   closureNote?: string;
   tags?: string[];
@@ -98,7 +99,7 @@ export interface Ticket {
 export interface CreateTicketPayload {
   title: string;
   description: string;
-  // clientId eliminado
+  clientId: string;
   priority?: TicketPriority;
   assignedAgentId?: string;
   tags?: string[];

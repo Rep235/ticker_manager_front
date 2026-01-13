@@ -5,25 +5,26 @@ import { Button, Select, Card, CardHeader, CardBody, CardFooter, Alert } from '.
 import { LoadingState, ErrorState, Breadcrumbs } from '../components/common';
 import { MessageSquare } from 'lucide-react';
 import type { UpdateTicketPayload, TicketStatus } from '../types';
+import { getUserIdFromToken } from '../lib/jwt';
 
 const TicketDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { ticket, loading, error, updateTicket, deleteTicket } = useTicketDetail(id);
-  const { comments, fetchComments } = useComments(id);
+  const { comments, fetchComments, addComment, total, totalPages, page, nextPage, prevPage } = useComments(id, { initialPageSize: 20 });
   const [isEditing, setIsEditing] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCommentSubmitting, setIsCommentSubmitting] = useState(false);
 
   const [editData, setEditData] = useState<UpdateTicketPayload>({});
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (ticket) {
+    if (id) {
       fetchComments();
     }
-  }, [ticket, fetchComments]);
+  }, [id, fetchComments]);
 
   const handleEdit = (field: keyof UpdateTicketPayload, value: any) => {
     setEditData((prev) => ({ ...prev, [field]: value }));
@@ -44,8 +45,28 @@ const TicketDetailPage = () => {
   };
 
   const handleAddComment = async () => {
-    // Implementar después de obtener userId
-    setNewComment('');
+    if (!id || !newComment.trim()) return;
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      setUpdateError('No se pudo determinar el usuario actual para comentar.');
+      return;
+    }
+    try {
+      setUpdateError(null);
+      setIsCommentSubmitting(true);
+      await addComment({
+        content: newComment.trim(),
+        ticketId: id,
+        authorId: userId,
+        isInternal: false,
+      });
+      setNewComment('');
+      await fetchComments();
+    } catch (err: any) {
+      setUpdateError(err?.response?.data?.message || err?.message || 'Error al agregar comentario');
+    } finally {
+      setIsCommentSubmitting(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -173,7 +194,7 @@ const TicketDetailPage = () => {
           {/* Comments Section */}
           <Card className="mt-6">
             <CardHeader
-              title={`Comentarios (${comments.length})`}
+              title={`Comentarios (${total})`}
               description="Historial de conversación"
             />
             <CardBody className="space-y-4">
@@ -207,6 +228,18 @@ const TicketDetailPage = () => {
                 </div>
               )}
 
+              {/* Pagination Controls */}
+              {total > 0 && (
+                <div className="flex items-center justify-between pt-2">
+                  <div className="text-sm text-gray-600">Total: {total}</div>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="secondary" onClick={prevPage} disabled={page <= 1}>Anterior</Button>
+                    <span className="text-sm">Página {page} de {Math.max(1, totalPages || 1)}</span>
+                    <Button size="sm" onClick={nextPage} disabled={totalPages ? page >= totalPages : false}>Siguiente</Button>
+                  </div>
+                </div>
+              )}
+
               {/* New Comment Input */}
               <div className="pt-4 border-t border-gray-200 space-y-3">
                 <textarea
@@ -220,7 +253,8 @@ const TicketDetailPage = () => {
                   <Button
                     size="sm"
                     onClick={handleAddComment}
-                    disabled={!newComment.trim()}
+                    isLoading={isCommentSubmitting}
+                    disabled={!newComment.trim() || isCommentSubmitting}
                   >
                     Comentar
                   </Button>

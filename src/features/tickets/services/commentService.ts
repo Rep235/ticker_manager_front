@@ -1,10 +1,18 @@
 import type { Comment, CreateCommentPayload, UpdateCommentPayload } from '../../../types/index';
 import { httpClient } from '../../../services/http';
 
+export type PaginatedResponse<T> = {
+  data: T[];
+  total: number;
+  offset: number;
+  limit: number;
+  totalPages?: number;
+};
+
 export const commentService = {
-  async getComments(ticketId: string): Promise<Comment[]> {
-    const { data } = await httpClient.get<Comment[]>('/comments', {
-      params: { ticketId },
+  async getComments(ticketId: string, offset: number = 0, limit: number = 10): Promise<PaginatedResponse<Comment>> {
+    const { data } = await httpClient.get<PaginatedResponse<Comment>>('/comments', {
+      params: { ticketId, offset, limit },
     });
     return data;
   },

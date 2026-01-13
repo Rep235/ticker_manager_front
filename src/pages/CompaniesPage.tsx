@@ -66,7 +66,7 @@ export default function CompaniesPage() {
   const saveInlineEdit = async () => {
     setInlineEdit(prev => ({ ...prev, submitting: true, error: null }));
     try {
-      const payload: any = { id: inlineEdit.companyId! };
+      const payload: any = {};
       if (inlineEdit.field === 'responsibleUserIds') {
         payload.responsibleUserIds = inlineEdit.value.split(',').map((id: string) => id.trim()).filter(Boolean);
       } else if (inlineEdit.field) {
