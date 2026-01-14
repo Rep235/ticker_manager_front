@@ -1,16 +1,66 @@
 import React, { useState } from 'react';
 import { useTickets } from '../features/tickets';
-import { Button, Card, CardBody, Select } from '../components/ui';
+import { Button, Card, CardBody, Select, Input, Alert } from '../components/ui';
 import { LoadingState, ErrorState, EmptyState, Breadcrumbs } from '../components/common';
 import { Plus, Search, Filter } from 'lucide-react';
-import type { TicketStatus, TicketPriority } from '../types';
-import { Link } from 'react-router-dom';
+import type { TicketStatus, TicketPriority, CreateTicketPayload } from '../types';
+import { Link, useNavigate } from 'react-router-dom';
+import { ticketService } from '../features/tickets/services';
+import { getUserIdFromToken } from '../lib/jwt';
 
 const TicketsPage: React.FC = () => {
-  const { tickets, loading, error, refetch } = useTickets();
+  const navigate = useNavigate();
+  const { tickets, loading, error, refetch, page, totalPages, total, nextPage, prevPage } = useTickets({ initialPageSize: 10 });
   const [statusFilter, setStatusFilter] = useState<TicketStatus | ''>('');
   const [priorityFilter, setPriorityFilter] = useState<TicketPriority | ''>('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [showCreate, setShowCreate] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    priority: '' as TicketPriority | '',
+    dueDate: '',
+    tags: '',
+  });
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateError(null);
+    if (!form.title.trim() || !form.description.trim()) {
+      setCreateError('Título y descripción son obligatorios.');
+      return;
+    }
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      setCreateError('No se pudo determinar el usuario actual. Inicia sesión nuevamente.');
+      return;
+    }
+    setIsCreating(true);
+    try {
+      const payload: CreateTicketPayload = {
+        clientId: userId,
+        title: form.title.trim(),
+        description: form.description.trim(),
+        priority: form.priority || undefined,
+        dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : undefined,
+        tags: form.tags
+          ? form.tags
+              .split(',')
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : undefined,
+      };
+      const created = await ticketService.createTicket(payload);
+      navigate(`/tickets/${created.id}`);
+    } catch (err: any) {
+      setCreateError(err?.response?.data?.message || err?.message || 'Error al crear el ticket');
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   const filteredTickets = Array.isArray(tickets)
     ? tickets.filter((ticket) => {
@@ -82,8 +132,8 @@ const TicketsPage: React.FC = () => {
     <div className="space-y-6">
       <div>
         <Breadcrumbs items={[{ label: 'Tickets' }]} />
-        <h1 className="text-2xl font-semibold text-gray-900 mt-4">Gestionar Tickets</h1>
-        <p className="text-sm text-gray-600 mt-1">
+        <h1 className="text-2xl font-semibold text-[var(--text)] mt-4">Gestionar Tickets</h1>
+        <p className="text-sm text-[var(--muted)] mt-1">
           Visualiza y gestiona todos tus tickets de soporte.
         </p>
       </div>
@@ -120,12 +170,85 @@ const TicketsPage: React.FC = () => {
             <Filter size={16} className="mr-2" />
             Actualizar
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setShowCreate((v) => !v)}>
             <Plus size={16} className="mr-2" />
-            Nuevo
+            {showCreate ? 'Cerrar' : 'Nuevo'}
           </Button>
         </div>
       </div>
+
+      {showCreate && (
+        <Card>
+          <CardBody className="space-y-4">
+            <h2 className="text-lg font-semibold text-[var(--text)]">Crear Ticket</h2>
+
+            {createError && (
+              <Alert type="error" message={createError} onClose={() => setCreateError(null)} />
+            )}
+
+            <form onSubmit={handleCreate} className="space-y-4">
+              <Input
+                label="Título"
+                placeholder="Breve título descriptivo"
+                value={form.title}
+                onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))}
+                required
+              />
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--text)] mb-1">Descripción</label>
+                <textarea
+                  placeholder="Describe el problema o solicitud con el mayor detalle posible"
+                  value={form.description}
+                  onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={4}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Select
+                  label="Prioridad"
+                  options={[
+                    { value: 'LOW', label: 'Bajo' },
+                    { value: 'MEDIUM', label: 'Medio' },
+                    { value: 'HIGH', label: 'Alto' },
+                    { value: 'CRITICAL', label: 'Crítico' },
+                  ]}
+                  value={form.priority}
+                  onChange={(e) =>
+                    setForm((s) => ({ ...s, priority: (e.target.value as TicketPriority) || '' }))
+                  }
+                />
+
+                <Input
+                  label="Vencimiento (opcional)"
+                  type="date"
+                  value={form.dueDate}
+                  onChange={(e) => setForm((s) => ({ ...s, dueDate: e.target.value }))}
+                />
+
+                <Input
+                  label="Tags (opcional, separadas por coma)"
+                  placeholder="mobile, ios, login"
+                  value={form.tags}
+                  onChange={(e) => setForm((s) => ({ ...s, tags: e.target.value }))}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button variant="secondary" type="button" onClick={() => setShowCreate(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" isLoading={isCreating}>
+                  Crear
+                </Button>
+              </div>
+            </form>
+          </CardBody>
+        </Card>
+      )}
 
       {/* Error State */}
       {error && <ErrorState message={error} onRetry={refetch} />}
@@ -135,55 +258,55 @@ const TicketsPage: React.FC = () => {
         <EmptyState message="No hay tickets que coincidan con tus filtros" />
       )}
 
-      {/* Tickets List */}
+      {/* Tickets Table */}
       {!error && filteredTickets.length > 0 && (
-        <div className="space-y-3">
-          {filteredTickets.map((ticket) => (
-            <Link
-              key={ticket.id}
-              to={`/tickets/${ticket.id}`}
-              className="block"
-            >
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardBody className="space-y-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate">
-                        {ticket.title}
-                      </h3>
-                      <p className="text-sm text-gray-600 line-clamp-2 mt-1">
-                        {ticket.description}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
+        <Card>
+          <CardBody className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--border)]">
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Título</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Prioridad</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Estado</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Vencimiento</th>
+                  <th className="text-right py-3 px-4 font-semibold text-[var(--text)]">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTickets.map((ticket) => (
+                  <tr key={ticket.id} className="border-b border-[var(--border)] hover:bg-[var(--surface-muted)]">
+                    <td className="py-3 px-4 text-[var(--text)] max-w-[360px]">
+                      <div className="font-medium truncate">{ticket.title}</div>
+                      <div className="text-xs text-[var(--muted)] line-clamp-1">{ticket.description}</div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className={`text-xs font-semibold ${getPriorityColor(ticket.priority)}`}>{ticket.priority}</span>
+                    </td>
+                    <td className="py-3 px-4">
                       <span className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor(ticket.status)}`}>
                         {ticket.status.replace(/_/g, ' ')}
                       </span>
-                      <span className={`text-xs font-semibold ${getPriorityColor(ticket.priority)}`}>
-                        {ticket.priority}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
-                    {ticket.dueDate && (
-                      <div>
-                        Vencimiento: <span className="font-medium">{new Date(ticket.dueDate).toLocaleDateString('es-ES')}</span>
-                      </div>
-                    )}
-                  </div>
-                </CardBody>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {/* Stats Footer */}
-      {!error && filteredTickets.length > 0 && (
-        <div className="text-sm text-gray-600 pt-4 border-t border-gray-200">
-          Mostrando <strong>{filteredTickets.length}</strong> de <strong>{tickets.length}</strong> tickets
-        </div>
+                    </td>
+                    <td className="py-3 px-4 text-[var(--muted)]">
+                      {ticket.dueDate ? new Date(ticket.dueDate).toLocaleDateString('es-ES') : '-'}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <Link to={`/tickets/${ticket.id}`} className="text-blue-600 hover:text-blue-700 font-medium">Ver</Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="flex items-center justify-between mt-4">
+              <div className="text-sm text-[var(--muted)]">Total: {total}</div>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="secondary" onClick={prevPage} disabled={page <= 1}>Anterior</Button>
+                <span className="text-sm">Página {page} de {Math.max(1, totalPages || 1)}</span>
+                <Button size="sm" onClick={nextPage} disabled={totalPages ? page >= totalPages : false}>Siguiente</Button>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       )}
     </div>
   );

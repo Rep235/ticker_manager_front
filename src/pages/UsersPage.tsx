@@ -83,8 +83,8 @@ const UsersPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <Breadcrumbs items={[{ label: 'Usuarios: Gestión manual' }]} />
-          <h1 className="text-2xl font-semibold text-gray-900 mt-4">Usuarios: Gestión manual</h1>
-          <p className="text-sm text-gray-600 mt-1">Administra los usuarios del sistema de forma manual</p>
+          <h1 className="text-2xl font-semibold text-[var(--text)] mt-4">Usuarios: Gestión manual</h1>
+          <p className="text-sm text-[var(--muted)] mt-1">Administra los usuarios del sistema de forma manual</p>
           <div className="my-4 max-w-xs">
             <Input
               name="search"
@@ -196,21 +196,21 @@ const UsersPage: React.FC = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Nombre</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Usuario</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Estado</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">Acciones</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Nombre</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Usuario</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Email</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Estado</th>
+                  <th className="text-right py-3 px-4 font-semibold text-[var(--text)]">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.map((user) => (
-                  <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-gray-900">
+                  <tr key={user.id} className="border-b border-[var(--border)] hover:bg-[var(--surface-muted)]">
+                    <td className="py-3 px-4 text-[var(--text)]">
                       {user.firstName} {user.lastName}
                     </td>
-                    <td className="py-3 px-4 text-gray-600">{user.username}</td>
-                    <td className="py-3 px-4 text-gray-600">{user.email}</td>
+                    <td className="py-3 px-4 text-[var(--muted)]">{user.username}</td>
+                    <td className="py-3 px-4 text-[var(--muted)]">{user.email}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -232,7 +232,7 @@ const UsersPage: React.FC = () => {
               </tbody>
             </table>
             <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-gray-600">Total: {total}</div>
+              <div className="text-sm text-[var(--muted)]">Total: {total}</div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="secondary" onClick={prevPage} disabled={page <= 1}>Anterior</Button>
                 <span className="text-sm">Página {page} de {Math.max(1, totalPages || 1)}</span>

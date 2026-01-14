@@ -290,9 +290,36 @@ Authorization: Bearer <your-token>
 ```bash
 GET http://localhost:3000/tickets/:id
 Authorization: Bearer <your-token>
+
+# Response / Respuesta
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Login issue on mobile app",
+  "description": "Users are unable to login using the mobile application on iOS devices.",
+  "status": "IN_PROGRESS",
+  "priority": "HIGH",
+  "clientId": "6f1c6cde-3f0b-4f4d-95e5-2f2d8c1cb5f5",
+  "assignedAgentId": "8c9f53e1-f13f-4276-a5f2-f7f94b260a74",
+  "closureReason": null,
+  "closureNote": null,
+  "closedAt": null,
+  "dueDate": "2025-01-19T23:59:59.000Z",
+  "tags": ["mobile", "ios", "login"],
+  "attachments": [],
+  "createdAt": "2025-01-12T10:00:00.000Z",
+  "updatedAt": "2025-01-12T14:30:00.000Z"
+}
 ```
 
+**EN:** Note: `assignedAgentId` is dynamically retrieved from the active ticket assignment. To track all assignments and reassignments, use the assignment history endpoint.
+
+**ES:** Nota: `assignedAgentId` se obtiene dinámicamente de la asignación de ticket activa. Para rastrear todas las asignaciones y reasignaciones, usa el endpoint de historial de asignaciones.
+
 ### Update Ticket Status / Actualizar Estado del Ticket
+
+**EN:** Update ticket status, priority, or assignment. When `assignedAgentId` changes, the previous assignment is automatically deactivated and a new one is created in the assignment history.
+
+**ES:** Actualizar estado del ticket, prioridad o asignación. Cuando `assignedAgentId` cambia, la asignación anterior se desactiva automáticamente y se crea una nueva en el historial.
 
 ```bash
 PUT http://localhost:3000/tickets/:id
@@ -318,6 +345,59 @@ Content-Type: application/json
   "closureNote": "Issue was resolved by updating the mobile app to version 2.1.0"
 }
 ```
+
+### Get Ticket Assignment History / Obtener Historial de Asignaciones del Ticket
+
+**EN:** Get the complete history of agent assignments for a ticket. Shows who handled the ticket, when they were assigned, when reassigned, and reasons for changes.
+
+**ES:** Obtener el historial completo de asignaciones de agentes para un ticket. Muestra quién manejó el ticket, cuándo fueron asignados, cuándo reasignados, y razones de los cambios.
+
+```bash
+GET http://localhost:3000/tickets/:id/assignments
+Authorization: Bearer <your-token>
+
+# Response / Respuesta
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "ticketId": "550e8400-e29b-41d4-a716-446655440000",
+    "agentId": "550e8400-e29b-41d4-a716-446655440010",
+    "agentName": "John Doe",
+    "assignedBy": "550e8400-e29b-41d4-a716-446655440020",
+    "assignedByName": "Admin User",
+    "assignedAt": "2025-01-12T10:00:00.000Z",
+    "unassignedAt": "2025-01-12T14:30:00.000Z",
+    "reason": "Reassigned to specialist",
+    "isActive": false
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "ticketId": "550e8400-e29b-41d4-a716-446655440000",
+    "agentId": "550e8400-e29b-41d4-a716-446655440030",
+    "agentName": "Jane Smith",
+    "assignedBy": "550e8400-e29b-41d4-a716-446655440020",
+    "assignedByName": "Admin User",
+    "assignedAt": "2025-01-12T14:30:00.000Z",
+    "unassignedAt": null,
+    "reason": null,
+    "isActive": true
+  }
+]
+```
+
+**EN:** Key fields:
+- `isActive`: true if this is the current assignment
+- `unassignedAt`: null if still active, set when assignment is replaced
+- `reason`: Optional reason for assignment or reassignment
+- The most recent assignment where `isActive = true` determines the `assignedAgentId` in the ticket response
+
+**ES:** Campos clave:
+- `isActive`: true si esta es la asignación actual
+- `unassignedAt`: null si está activa, establecido cuando la asignación se reemplaza
+- `reason`: Razón opcional para la asignación o reasignación
+- La asignación más reciente donde `isActive = true` determina el `assignedAgentId` en la respuesta del ticket
+
+
 
 ## 💬 Comments / Comentarios
 
@@ -468,6 +548,8 @@ curl -X POST http://localhost:3000/tickets \
 - Companies use `tier` (FREE, BASIC, PREMIUM, ENTERPRISE), `rut` (unique string), and `responsibleUserIds` (UUID array of users)
 - Passwords are hashed using bcryptjs
 - JWT tokens expire after 1 day by default (configurable via JWT_EXPIRES_IN)
+- **Ticket Assignment:** The `assignedAgentId` field in ticket responses is dynamically calculated from the active ticket assignment (where `isActive = true`). To view the complete assignment history including reassignments and changes, use the GET /tickets/:id/assignments endpoint
+- **Removed Fields:** The tickets table has been simplified and no longer stores `resolvedAt`, `responseTime`, or `resolutionTime`. These can be calculated on-demand from other fields if needed
 
 **ES:**
 - Todas las marcas de tiempo están en formato ISO 8601 con zona horaria (UTC)
@@ -475,3 +557,5 @@ curl -X POST http://localhost:3000/tickets \
 - Las compañías usan `tier` (FREE, BASIC, PREMIUM, ENTERPRISE), `rut` (cadena única) y `responsibleUserIds` (arreglo de UUIDs de usuarios)
 - Las contraseñas se hashean usando bcryptjs
 - Los tokens JWT expiran después de 1 día por defecto (configurable vía JWT_EXPIRES_IN)
+- **Asignación de Tickets:** El campo `assignedAgentId` en las respuestas de tickets se calcula dinámicamente de la asignación activa del ticket (donde `isActive = true`). Para ver el historial completo de asignaciones incluyendo reasignaciones y cambios, usa el endpoint GET /tickets/:id/assignments
+- **Campos Eliminados:** La tabla de tickets ha sido simplificada y ya no almacena `resolvedAt`, `responseTime`, o `resolutionTime`. Estos pueden calcularse bajo demanda a partir de otros campos si es necesario

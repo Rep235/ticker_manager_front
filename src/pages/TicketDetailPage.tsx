@@ -5,25 +5,26 @@ import { Button, Select, Card, CardHeader, CardBody, CardFooter, Alert } from '.
 import { LoadingState, ErrorState, Breadcrumbs } from '../components/common';
 import { MessageSquare } from 'lucide-react';
 import type { UpdateTicketPayload, TicketStatus } from '../types';
+import { getUserIdFromToken } from '../lib/jwt';
 
 const TicketDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { ticket, loading, error, updateTicket, deleteTicket } = useTicketDetail(id);
-  const { comments, fetchComments } = useComments(id);
+  const { comments, fetchComments, addComment, total, totalPages, page, nextPage, prevPage } = useComments(id, { initialPageSize: 20 });
   const [isEditing, setIsEditing] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCommentSubmitting, setIsCommentSubmitting] = useState(false);
 
   const [editData, setEditData] = useState<UpdateTicketPayload>({});
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (ticket) {
+    if (id) {
       fetchComments();
     }
-  }, [ticket, fetchComments]);
+  }, [id, fetchComments]);
 
   const handleEdit = (field: keyof UpdateTicketPayload, value: any) => {
     setEditData((prev) => ({ ...prev, [field]: value }));
@@ -44,8 +45,28 @@ const TicketDetailPage = () => {
   };
 
   const handleAddComment = async () => {
-    // Implementar después de obtener userId
-    setNewComment('');
+    if (!id || !newComment.trim()) return;
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      setUpdateError('No se pudo determinar el usuario actual para comentar.');
+      return;
+    }
+    try {
+      setUpdateError(null);
+      setIsCommentSubmitting(true);
+      await addComment({
+        content: newComment.trim(),
+        ticketId: id,
+        authorId: userId,
+        isInternal: false,
+      });
+      setNewComment('');
+      await fetchComments();
+    } catch (err: any) {
+      setUpdateError(err?.response?.data?.message || err?.message || 'Error al agregar comentario');
+    } finally {
+      setIsCommentSubmitting(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -94,7 +115,7 @@ const TicketDetailPage = () => {
             { label: ticket.title },
           ]}
         />
-        <h1 className="text-2xl font-semibold text-gray-900 mt-4">{ticket.title}</h1>
+        <h1 className="text-2xl font-semibold text-[var(--text)] mt-4">{ticket.title}</h1>
       </div>
 
       {updateError && <Alert type="error" message={updateError} />}
@@ -118,7 +139,7 @@ const TicketDetailPage = () => {
                     rows={4}
                   />
                 ) : (
-                  <p className="text-gray-700">{ticket.description}</p>
+                  <p className="text-[var(--text)]">{ticket.description}</p>
                 )}
               </div>
 
@@ -173,7 +194,7 @@ const TicketDetailPage = () => {
           {/* Comments Section */}
           <Card className="mt-6">
             <CardHeader
-              title={`Comentarios (${comments.length})`}
+              title={`Comentarios (${total})`}
               description="Historial de conversación"
             />
             <CardBody className="space-y-4">
@@ -207,6 +228,18 @@ const TicketDetailPage = () => {
                 </div>
               )}
 
+              {/* Pagination Controls */}
+              {total > 0 && (
+                <div className="flex items-center justify-between pt-2">
+                  <div className="text-sm text-gray-600">Total: {total}</div>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="secondary" onClick={prevPage} disabled={page <= 1}>Anterior</Button>
+                    <span className="text-sm">Página {page} de {Math.max(1, totalPages || 1)}</span>
+                    <Button size="sm" onClick={nextPage} disabled={totalPages ? page >= totalPages : false}>Siguiente</Button>
+                  </div>
+                </div>
+              )}
+
               {/* New Comment Input */}
               <div className="pt-4 border-t border-gray-200 space-y-3">
                 <textarea
@@ -220,7 +253,8 @@ const TicketDetailPage = () => {
                   <Button
                     size="sm"
                     onClick={handleAddComment}
-                    disabled={!newComment.trim()}
+                    isLoading={isCommentSubmitting}
+                    disabled={!newComment.trim() || isCommentSubmitting}
                   >
                     Comentar
                   </Button>
@@ -239,12 +273,12 @@ const TicketDetailPage = () => {
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Estatus</p>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-[var(--text)]">
                     {ticket.status.replace(/_/g, ' ')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600 mb-1">Prioridad</p>
+                  <p className="text-xs text-[var(--muted)] mb-1">Prioridad</p>
                   <p className={`text-sm font-medium ${
                     ticket.priority === 'CRITICAL'
                       ? 'text-red-600'
@@ -265,14 +299,14 @@ const TicketDetailPage = () => {
             <CardBody className="space-y-3 text-sm">
               <div>
                 <p className="text-xs text-gray-600">Creado</p>
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-[var(--text)]">
                   {new Date(ticket.createdAt).toLocaleDateString('es-ES')}
                 </p>
               </div>
               {ticket.dueDate && (
                 <div>
-                  <p className="text-xs text-gray-600">Vencimiento</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-xs text-[var(--muted)]">Vencimiento</p>
+                  <p className="font-medium text-[var(--text)]">
                     {new Date(ticket.dueDate).toLocaleDateString('es-ES')}
                   </p>
                 </div>
