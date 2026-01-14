@@ -132,8 +132,8 @@ const TicketsPage: React.FC = () => {
     <div className="space-y-6">
       <div>
         <Breadcrumbs items={[{ label: 'Tickets' }]} />
-        <h1 className="text-2xl font-semibold text-gray-900 mt-4">Gestionar Tickets</h1>
-        <p className="text-sm text-gray-600 mt-1">
+        <h1 className="text-2xl font-semibold text-[var(--text)] mt-4">Gestionar Tickets</h1>
+        <p className="text-sm text-[var(--muted)] mt-1">
           Visualiza y gestiona todos tus tickets de soporte.
         </p>
       </div>
@@ -180,7 +180,7 @@ const TicketsPage: React.FC = () => {
       {showCreate && (
         <Card>
           <CardBody className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Crear Ticket</h2>
+            <h2 className="text-lg font-semibold text-[var(--text)]">Crear Ticket</h2>
 
             {createError && (
               <Alert type="error" message={createError} onClose={() => setCreateError(null)} />
@@ -196,7 +196,7 @@ const TicketsPage: React.FC = () => {
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                <label className="block text-sm font-medium text-[var(--text)] mb-1">Descripción</label>
                 <textarea
                   placeholder="Describe el problema o solicitud con el mayor detalle posible"
                   value={form.description}
@@ -264,20 +264,20 @@ const TicketsPage: React.FC = () => {
           <CardBody className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Título</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Prioridad</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Estado</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Vencimiento</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">Acciones</th>
+                <tr className="border-b border-[var(--border)]">
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Título</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Prioridad</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Estado</th>
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text)]">Vencimiento</th>
+                  <th className="text-right py-3 px-4 font-semibold text-[var(--text)]">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredTickets.map((ticket) => (
-                  <tr key={ticket.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-gray-900 max-w-[360px]">
+                  <tr key={ticket.id} className="border-b border-[var(--border)] hover:bg-[var(--surface-muted)]">
+                    <td className="py-3 px-4 text-[var(--text)] max-w-[360px]">
                       <div className="font-medium truncate">{ticket.title}</div>
-                      <div className="text-xs text-gray-600 line-clamp-1">{ticket.description}</div>
+                      <div className="text-xs text-[var(--muted)] line-clamp-1">{ticket.description}</div>
                     </td>
                     <td className="py-3 px-4">
                       <span className={`text-xs font-semibold ${getPriorityColor(ticket.priority)}`}>{ticket.priority}</span>
@@ -287,7 +287,7 @@ const TicketsPage: React.FC = () => {
                         {ticket.status.replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-gray-700">
+                    <td className="py-3 px-4 text-[var(--muted)]">
                       {ticket.dueDate ? new Date(ticket.dueDate).toLocaleDateString('es-ES') : '-'}
                     </td>
                     <td className="py-3 px-4 text-right">
@@ -298,7 +298,7 @@ const TicketsPage: React.FC = () => {
               </tbody>
             </table>
             <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-gray-600">Total: {total}</div>
+              <div className="text-sm text-[var(--muted)]">Total: {total}</div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="secondary" onClick={prevPage} disabled={page <= 1}>Anterior</Button>
                 <span className="text-sm">Página {page} de {Math.max(1, totalPages || 1)}</span>

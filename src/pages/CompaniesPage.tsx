@@ -83,7 +83,7 @@ export default function CompaniesPage() {
   return (
     <div className="max-w-3xl mx-auto p-4">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Compañías</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">Compañías</h1>
         <div className="flex gap-2 items-center">
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <input type="checkbox" checked={editMode} onChange={e => setEditMode(e.target.checked)} className="accent-blue-600" />
@@ -130,13 +130,13 @@ export default function CompaniesPage() {
         </Card>
       )}
       {loading ? (
-        <div>Cargando compañías...</div>
+        <div className="text-[var(--muted)]">Cargando compañías...</div>
       ) : error ? (
         <Alert type="error" message={error || ''} />
       ) : (
         <div className="space-y-4">
           {filteredCompanies.length === 0 ? (
-            <div className="text-gray-500">No hay compañías registradas.</div>
+            <div className="text-[var(--muted)]">No hay compañías registradas.</div>
           ) : (
             filteredCompanies.map((company: Company) => (
               <Card key={company.id} className="flex flex-col md:flex-row md:items-center md:justify-between p-4">
@@ -152,7 +152,7 @@ export default function CompaniesPage() {
                       <span>{company.name} {editMode && <Button size="sm" variant="ghost" onClick={() => startInlineEdit(company.id, 'name', company.name)}>Editar</Button>}</span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-[var(--muted)]">
                     <span className="font-medium">RUT:</span>
                     {inlineEdit.companyId === company.id && inlineEdit.field === 'rut' ? (
                       <span className="flex gap-2 items-center">
@@ -164,7 +164,7 @@ export default function CompaniesPage() {
                       <span> {company.rut} {editMode && <Button size="sm" variant="ghost" onClick={() => startInlineEdit(company.id, 'rut', company.rut)}>Editar</Button>}</span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-[var(--muted)]">
                     <span className="font-medium">Email:</span>
                     {inlineEdit.companyId === company.id && inlineEdit.field === 'email' ? (
                       <span className="flex gap-2 items-center">
@@ -176,7 +176,7 @@ export default function CompaniesPage() {
                       <span> {company.email} {editMode && <Button size="sm" variant="ghost" onClick={() => startInlineEdit(company.id, 'email', company.email || '')}>Editar</Button>}</span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-[var(--muted)]">
                     <span className="font-medium">Teléfono:</span>
                     {inlineEdit.companyId === company.id && inlineEdit.field === 'phone' ? (
                       <span className="flex gap-2 items-center">
@@ -188,7 +188,7 @@ export default function CompaniesPage() {
                       <span> {company.phone} {editMode && <Button size="sm" variant="ghost" onClick={() => startInlineEdit(company.id, 'phone', company.phone || '')}>Editar</Button>}</span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-[var(--muted)]">
                     <span className="font-medium">Dirección:</span>
                     {inlineEdit.companyId === company.id && inlineEdit.field === 'address' ? (
                       <span className="flex gap-2 items-center">
@@ -200,7 +200,7 @@ export default function CompaniesPage() {
                       <span> {company.address} {editMode && <Button size="sm" variant="ghost" onClick={() => startInlineEdit(company.id, 'address', company.address || '')}>Editar</Button>}</span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-[var(--muted)]">
                     <span className="font-medium">Descripción:</span>
                     {inlineEdit.companyId === company.id && inlineEdit.field === 'description' ? (
                       <span className="flex gap-2 items-center">
@@ -212,7 +212,7 @@ export default function CompaniesPage() {
                       <span> {company.description} {editMode && <Button size="sm" variant="ghost" onClick={() => startInlineEdit(company.id, 'description', company.description || '')}>Editar</Button>}</span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-600 mt-2">
+                  <div className="text-sm text-[var(--muted)] mt-2">
                     <span className="font-medium">Responsables:</span>
                     {inlineEdit.companyId === company.id && inlineEdit.field === 'responsibleUserIds' ? (
                       <span className="flex gap-2 items-center">
@@ -232,7 +232,7 @@ export default function CompaniesPage() {
                         </span>
                       ) : (
                         <span>
-                          <span className="ml-2 text-gray-400">Sin responsables</span>
+                          <span className="ml-2 text-[var(--muted)]">Sin responsables</span>
                           {editMode && <Button size="sm" variant="ghost" onClick={() => startInlineEdit(company.id, 'responsibleUserIds', '')}>Editar</Button>}
                         </span>
                       )

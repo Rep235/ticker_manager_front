@@ -41,17 +41,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-gray-50 border-r border-gray-200 transition-transform ${
+        className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-[var(--surface)] border-r border-[var(--border)] transition-transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         <div className="h-full flex flex-col">
           {/* Header */}
-          <div className="p-6 flex items-center justify-between md:justify-start">
-            <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+          <div className="p-6 flex items-center justify-between md:justify-start border-b border-[var(--border)]">
+            <h2 className="text-lg font-semibold text-[var(--text)]">Menu</h2>
             <button
               onClick={onClose}
-              className="md:hidden p-1 hover:bg-gray-200 rounded-lg"
+              className="md:hidden p-1 hover:bg-[var(--surface-muted)] rounded-lg"
               aria-label="Cerrar menú"
             >
               <X size={20} />
@@ -69,8 +69,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
                       isActive
-                        ? 'bg-blue-100 text-blue-700 font-medium'
-                        : 'text-gray-700 hover:bg-gray-200'
+                        ? 'bg-[var(--accent-100)] text-[var(--accent-700)] font-medium'
+                        : 'text-[var(--muted)] hover:bg-[var(--surface-muted)]'
                     }`
                   }
                 >

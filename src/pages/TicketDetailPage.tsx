@@ -115,7 +115,7 @@ const TicketDetailPage = () => {
             { label: ticket.title },
           ]}
         />
-        <h1 className="text-2xl font-semibold text-gray-900 mt-4">{ticket.title}</h1>
+        <h1 className="text-2xl font-semibold text-[var(--text)] mt-4">{ticket.title}</h1>
       </div>
 
       {updateError && <Alert type="error" message={updateError} />}
@@ -139,7 +139,7 @@ const TicketDetailPage = () => {
                     rows={4}
                   />
                 ) : (
-                  <p className="text-gray-700">{ticket.description}</p>
+                  <p className="text-[var(--text)]">{ticket.description}</p>
                 )}
               </div>
 
@@ -273,12 +273,12 @@ const TicketDetailPage = () => {
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Estatus</p>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-[var(--text)]">
                     {ticket.status.replace(/_/g, ' ')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600 mb-1">Prioridad</p>
+                  <p className="text-xs text-[var(--muted)] mb-1">Prioridad</p>
                   <p className={`text-sm font-medium ${
                     ticket.priority === 'CRITICAL'
                       ? 'text-red-600'
@@ -299,14 +299,14 @@ const TicketDetailPage = () => {
             <CardBody className="space-y-3 text-sm">
               <div>
                 <p className="text-xs text-gray-600">Creado</p>
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-[var(--text)]">
                   {new Date(ticket.createdAt).toLocaleDateString('es-ES')}
                 </p>
               </div>
               {ticket.dueDate && (
                 <div>
-                  <p className="text-xs text-gray-600">Vencimiento</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-xs text-[var(--muted)]">Vencimiento</p>
+                  <p className="font-medium text-[var(--text)]">
                     {new Date(ticket.dueDate).toLocaleDateString('es-ES')}
                   </p>
                 </div>
